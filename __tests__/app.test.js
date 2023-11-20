@@ -3,7 +3,7 @@ const db = require("../db/connection");
 const request = require("supertest");
 const {articleData, commentData, topicData, userData} = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
-
+const endPoints = require('../endpoints.json')
 
 afterAll(() => {
   return db.end();
@@ -22,6 +22,16 @@ describe("GET /api/(non existent end point)", () => {
     });
 })
 
+describe("GET /api", () => {
+    test("200 responds with an object describing all of the endpoints ", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({body}) => {
+          expect(body).toEqual(endPoints)
+          });
+        });
+    });
 
 
 describe("GET /api/topics", () => {
