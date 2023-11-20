@@ -22,6 +22,20 @@ describe("GET /api/(non existent end point)", () => {
     });
 })
 
+describe("GET /api", () => {
+    test("200 responds with an object describing all of the endpoints ", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({body}) => {
+            
+          for(const key in body) {
+   
+            expect(typeof body[key].description).toBe('string')
+          }
+          });
+        });
+    });
 
 
 describe("GET /api/topics", () => {
