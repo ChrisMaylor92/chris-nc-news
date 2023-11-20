@@ -41,19 +41,18 @@ describe("GET /api/topics", () => {
 
 describe("GET /api/articles/:article_id", () => {
     test("200 sends article object that matches the parametric article_ID to the client", () => {
-        const article_id = 5
         return request(app)
-        .get(`/api/articles/${article_id}`)
+        .get(`/api/articles/5`)
         .expect(200)
         .then(({ body }) => {
-          expect(typeof body.article.title).toBe('string');
-          expect(typeof body.article.topic).toBe('string');
-          expect(typeof body.article.author).toBe('string');
-          expect(typeof body.article.body).toBe('string');
-          expect(typeof body.article.votes).toBe('number');
-          expect(typeof body.article.created_at).toBe('string');
-          expect(typeof body.article.article_img_url).toBe('string');
-          expect(body.article.article_id).toBe(article_id);
+          expect(body.article.title).toBe("UNCOVERED: catspiracy to bring down democracy");
+          expect(body.article.topic).toBe("cats");
+          expect(body.article.author).toBe("rogersop");
+          expect(body.article.body).toBe("Bastet walks amongst us, and the cats are taking arms!");
+          expect(body.article.votes).toBe(0);
+          expect(body.article.created_at).toBe("2020-08-03T13:14:00.000Z");
+          expect(body.article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+          expect(body.article.article_id).toBe(5);
         });
     });
     test("400 bad request, wrong datatype used in parametric article_id", () => {
@@ -61,7 +60,6 @@ describe("GET /api/articles/:article_id", () => {
         .get(`/api/articles/banana`)
         .expect(400)
         .then(({ body }) => {
-            console.log(body)
           expect(body.msg).toBe('Bad request.');
        
         });
