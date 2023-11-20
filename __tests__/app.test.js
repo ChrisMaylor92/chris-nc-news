@@ -3,7 +3,7 @@ const db = require("../db/connection");
 const request = require("supertest");
 const {articleData, commentData, topicData, userData} = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
-
+const endPoints = require('../endpoints.json')
 
 afterAll(() => {
   return db.end();
@@ -28,11 +28,7 @@ describe("GET /api", () => {
         .get("/api")
         .expect(200)
         .then(({body}) => {
-            
-          for(const key in body) {
-   
-            expect(typeof body[key].description).toBe('string')
-          }
+          expect(body).toEqual(endPoints)
           });
         });
     });
