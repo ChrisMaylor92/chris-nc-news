@@ -91,8 +91,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/5/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments).toBeSortedBy( 'created_at', {descending: true})
-        expect(body.comments.length).toBe(2);
         body.comments.forEach((comment) => {
           expect(typeof comment.comment_id).toBe("number");
           expect(typeof comment.votes).toBe("number");
@@ -101,6 +99,22 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(typeof comment.body).toBe("string");
           expect(comment.article_id).toBe(5);
         });
+      });
+  });
+  test("200 sends an array of comments to the client that matched the article_id, that is sorted by created_at DESC", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy( 'created_at', {descending: true})
+      });
+  });
+  test("200 sends an array of comments to the client that matched the article_id, that is the correct length", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(2);
       });
   });
   test("200 sends an empty array of comments to the client when the article has no comments", () => {
