@@ -1,5 +1,5 @@
 
-const {insertComment, selectCommentsByArticleId} = require('../mvc_models/comments.model')
+const {insertComment, selectCommentsByArticleId, modelDeleteComment} = require('../mvc_models/comments.model')
 const {checkArticleExists} = require('../mvc_models/articles.model')
 
 
@@ -28,4 +28,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
     })
     .catch(next)
 
+}
+
+exports.deleteComment = (req, res, next) => {
+    const id = req.params.comment_id
+    modelDeleteComment(id)
+    .then(() => {
+        res.status(204).send()
+    })
+    .catch(next)
 }

@@ -232,3 +232,30 @@ describe("GET /api/articles/:article_id/comments", () => {
 
 })
 
+describe("DELETE /api/comments/:comment_id", () => {
+  test("200: deletes comment by comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({})
+     
+      });
+  })
+  test("400: wrong datatype in params", () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request.');
+      });
+  })
+  test("404 sends error not found when given an comment_id that doesnt exist", () => {
+    return request(app)
+      .delete("/api/comments/25")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Comment does not exist.');
+      });
+  })
+})
