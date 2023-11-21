@@ -85,3 +85,40 @@ describe("GET /api/articles/:article_id", () => {
     });
 })
 
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200 sends an array of comments to the client that matched the article_id", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy( 'created_at', {descending: true})
+        expect(body.comments.length).toBe(2);
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(5);
+        });
+      });
+  });
+  test("200 sends an empty array of comments to the client when the article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(0);
+      });
+  });
+  // test("404 sends error not found when given an article_id that doesnt exist", () => {
+  //   return request(app)
+  //     .get("/api/articles/20/comments")
+  //     .expect(404)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe('Article does not exist.');
+  //     });
+  // });
+  // //throws a 400 bad request for incorrect datatype in paremtric article_id
+
+})
