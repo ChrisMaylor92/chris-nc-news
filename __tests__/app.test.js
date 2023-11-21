@@ -111,6 +111,7 @@ describe("GET /api/articles/:article_id", () => {
 })
 
 
+
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds comment to comments table with corresponding article_id", () => {
     const newComment = {
@@ -169,4 +170,65 @@ describe("POST /api/articles/:article_id/comments", () => {
     });
 
   })
+
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200 sends an array of comments to the client that matched the article_id", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(5);
+        });
+      });
+  });
+  test("200 sends an array of comments to the client that matched the article_id, that is sorted by created_at DESC", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy( 'created_at', {descending: true})
+      });
+  });
+  test("200 sends an array of comments to the client that matched the article_id, that is the correct length", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(2);
+      });
+  });
+  test("200 sends an empty array of comments to the client when the article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(0);
+      });
+  });
+  test("404 sends error not found when given an article_id that doesnt exist", () => {
+    return request(app)
+      .get("/api/articles/20/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article does not exist.');
+      });
+  });
+  test("400 sends error bad request when given an article_id that is the wrong datatype", () => {
+    return request(app)
+      .get("/api/articles/banana/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request.');
+      });
+  });
+  
+
+})
 

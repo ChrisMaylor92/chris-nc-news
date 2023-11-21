@@ -1,9 +1,5 @@
 const db = require("../db/connection");
 
-// exports.insertComment = () => {
-//     return db.query()
-//     console.log('hello from the othersiiiiide')
-// }
 
 exports.insertComment = ({newComment, id}) => {
     return db.query(
@@ -15,3 +11,9 @@ exports.insertComment = ({newComment, id}) => {
       return result.rows[[0]]
     })
   }
+
+exports.selectCommentsByArticleId = (id) => {
+    return db.query(`
+    SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [id])
+} 
+
