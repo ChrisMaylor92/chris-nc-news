@@ -130,17 +130,17 @@ describe("PATCH /api/articles/:article_id", () => {
           expect(body.updatedArticle.article_id).toBe(5);
         });
     })
-  //   test.only("404 not found, correct datatype used but nothing exists at that parametric article_id", () => {
-  //     const newVotes = { inc_votes: 5 }
-  //     return request(app)
-  //     .patch(`/api/articles/20`)
-  //     .send(newVotes)
-  //     .expect(404)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe('Article does not exist.');
+    test("404 not found, correct datatype used but nothing exists at that parametric article_id", () => {
+      const newVotes = { inc_votes: 5 }
+      return request(app)
+      .patch(`/api/articles/20`)
+      .send(newVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article does not exist.');
      
-  //     });
-  // });
+      });
+  });
 })
 
 
