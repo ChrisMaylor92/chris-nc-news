@@ -1,4 +1,13 @@
+const {selectArticles} = require('../mvc_models/articles.model')
 const {selectArticleById} = require('../mvc_models/articles.model')
+
+exports.getArticles = (req, res, next) => {
+    selectArticles()
+    .then((articles) => {
+        console.log(articles.rows)
+        res.status(200).send({articles: articles.rows})
+    })
+}
 
 exports.getArticleById = (req, res, next) => {
     selectArticleById(req.params.article_id)
