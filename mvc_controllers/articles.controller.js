@@ -1,5 +1,5 @@
-const {selectArticles} = require('../mvc_models/articles.model')
-const {selectArticleById} = require('../mvc_models/articles.model')
+
+const {selectArticleById, selectArticles, updateArticle} = require('../mvc_models/articles.model')
 
 exports.getArticles = (req, res, next) => {
     selectArticles()
@@ -15,4 +15,14 @@ exports.getArticleById = (req, res, next) => {
         res.status(200).send({article: rows[0]})
     })
     .catch(next)
+}
+
+exports.patchArticleById = (req, res, next) => {
+    const id = req.params.article_id
+    const newVotes = req.body.inc_votes
+    updateArticle(id, newVotes)
+    .then((updatedArticle) => {
+        res.status(200).send({updatedArticle})
+    })
+   
 }

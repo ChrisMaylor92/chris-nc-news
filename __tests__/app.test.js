@@ -111,3 +111,36 @@ describe("GET /api/articles/:article_id", () => {
 })
 
 
+describe("PATCH /api/articles/:article_id", () => {
+    test("200: changes article by article id", () => {
+      const newVotes = { inc_votes: 5 }
+      return request(app)
+        .patch("/api/articles/5")
+        .send(newVotes)
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body)
+          expect(body.updatedArticle.title).toBe("UNCOVERED: catspiracy to bring down democracy");
+          expect(body.updatedArticle.topic).toBe("cats");
+          expect(body.updatedArticle.author).toBe("rogersop");
+          expect(body.updatedArticle.body).toBe("Bastet walks amongst us, and the cats are taking arms!");
+          expect(body.updatedArticle.votes).toBe(5);
+          expect(body.updatedArticle.created_at).toBe("2020-08-03T13:14:00.000Z");
+          expect(body.updatedArticle.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+          expect(body.updatedArticle.article_id).toBe(5);
+        });
+    })
+  //   test.only("404 not found, correct datatype used but nothing exists at that parametric article_id", () => {
+  //     const newVotes = { inc_votes: 5 }
+  //     return request(app)
+  //     .patch(`/api/articles/20`)
+  //     .send(newVotes)
+  //     .expect(404)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe('Article does not exist.');
+     
+  //     });
+  // });
+})
+
+
