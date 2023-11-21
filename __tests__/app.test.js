@@ -128,19 +128,18 @@ describe("POST /api/articles/:article_id/comments", () => {
           expect(response.body.msg).toBe('Bad request.');
         });
     });
-    // test.only('400: responds with an appropriate status and error message when provided with correct properties but the wrong datatype', () => {
-    //   const newComment = {
-    //     username: 'butter_bridge',
-    //     body: 'Im really enjoying my time learning to code at Northcoders.'
-    //   }
-    //   return request(app)
-    //     .post('/api/articles/20/comments')
-    //     .send(newComment)
-    //     .expect(404)
-    //     .then((response) => {
-    //       expect(response.body.msg).toBe('Article not found.');
-    //     });
-    // });
-    
-    // responds with an error when passed an article_id that doesnt exist
+    test('404: responds with an appropriate status and error message when provided with correct properties but an article that doesnt exist', () => {
+      const newComment = {
+        username: 'butter_bridge',
+        body: 'Im really enjoying my time learning to code at Northcoders.'
+      }
+      return request(app)
+        .post('/api/articles/20/comments')
+        .send(newComment)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe('Article does not exist.');
+        });
+    });
+
   })
