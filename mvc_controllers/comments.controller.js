@@ -1,6 +1,22 @@
 
-const {selectCommentsByArticleId} = require('../mvc_models/comments.model')
+const {insertComment, selectCommentsByArticleId} = require('../mvc_models/comments.model')
 const {checkArticleExists} = require('../mvc_models/articles.model')
+
+
+exports.postComment = (req, res, next) => {
+    const newComment = req.body
+    const id = req.params.article_id
+    checkArticleExists(id)
+    .then(() => {
+        return insertComment({newComment, id })
+    })
+    .then((newComment) => {
+        res.status(201).send({newComment})
+    })
+    .catch(next)
+}
+
+
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const id = req.params.article_id
@@ -11,4 +27,5 @@ exports.getCommentsByArticleId = (req, res, next) => {
         res.status(200).send({comments})
     })
     .catch(next)
+
 }

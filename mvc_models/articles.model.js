@@ -24,7 +24,6 @@ exports.selectArticleById = (id) => {
                 return result
             }
         })
-
 }
 
 exports.checkArticleExists = (id) => {
@@ -35,5 +34,4 @@ exports.checkArticleExists = (id) => {
                 return Promise.reject({status:404, msg: 'Article does not exist.'})
             }
         })
-
 }
