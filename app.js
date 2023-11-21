@@ -5,7 +5,7 @@ const {getArticleById} = require('./mvc_controllers/articles.controller')
 const {getEndpoints} = require('./mvc_controllers/api.controller')
 const {postComment} = require('./mvc_controllers/comments.controller')
 const app = express()
-
+app.use(express.json());
 
 app.get('/api/topics', getTopics)
 

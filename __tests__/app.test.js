@@ -85,29 +85,62 @@ describe("GET /api/articles/:article_id", () => {
     });
 })
 
-// describe("POST /api/articles/:article_id/comments", () => {
-//   test.only("201: adds comment to comments table with corresponding article_id", () => {
-//     const newComment = {
-//       username: 'ChrisMaylor92',
-//       body: 'Im really enjoying my time learning to code at Northcoders.'
-//     }
-//     return request(app)
-//       .post("/api/articles/5/comments")
-//       .send(newComment)
-//       .expect(201)
-//       .then(({ body }) => {
-//         expect(body.comment).toBe('Im really enjoying my time learning to code at Northcoders.');
-//       });
-//     });
-//     test('400: responds with an appropriate status and error message when provided without the correct properties', () => {
-//       return request(app)
-//         .post('/api/treasures')
-//         .send({
-//           colour: 'kat'
-//         })
-//         .expect(400)
-//         .then((response) => {
-//           expect(response.body.msg).toBe('bad request');
-//         });
-//     });
-//   })
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: adds comment to comments table with corresponding article_id", () => {
+    const newComment = {
+      username: 'butter_bridge',
+      body: 'Im really enjoying my time learning to code at Northcoders.'
+    }
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newComment.body).toBe('Im really enjoying my time learning to code at Northcoders.')
+        expect(body.newComment.comment_id).toBe(19);
+        expect(body.newComment.article_id).toBe(5);
+        expect(body.newComment.author).toBe('butter_bridge');
+        expect(body.newComment.votes).toBe(0);
+        expect(typeof body.newComment.created_at).toBe('string');
+      });
+    });
+    test('400: responds with an appropriate status and error message when provided without the correct properties', () => {
+      return request(app)
+        .post('/api/articles/5/comments')
+        .send({
+          colour: 'kat'
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe('Bad request.');
+        });
+    });
+    test('400: responds with an appropriate status and error message when provided with correct properties but the wrong datatype', () => {
+      const newComment = {
+        username: 5,
+        body: 'Im really enjoying my time learning to code at Northcoders.'
+      }
+      return request(app)
+        .post('/api/articles/5/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe('Bad request.');
+        });
+    });
+    // test.only('400: responds with an appropriate status and error message when provided with correct properties but the wrong datatype', () => {
+    //   const newComment = {
+    //     username: 'butter_bridge',
+    //     body: 'Im really enjoying my time learning to code at Northcoders.'
+    //   }
+    //   return request(app)
+    //     .post('/api/articles/20/comments')
+    //     .send(newComment)
+    //     .expect(404)
+    //     .then((response) => {
+    //       expect(response.body.msg).toBe('Article not found.');
+    //     });
+    // });
+    
+    // responds with an error when passed an article_id that doesnt exist
+  })
