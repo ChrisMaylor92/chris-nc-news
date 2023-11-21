@@ -7,3 +7,4 @@ exports.getArticleById = (req, res, next) => {
     })
     .catch(next)
 }
+

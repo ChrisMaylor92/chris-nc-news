@@ -111,14 +111,22 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments.length).toBe(0);
       });
   });
-  // test("404 sends error not found when given an article_id that doesnt exist", () => {
-  //   return request(app)
-  //     .get("/api/articles/20/comments")
-  //     .expect(404)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe('Article does not exist.');
-  //     });
-  // });
-  // //throws a 400 bad request for incorrect datatype in paremtric article_id
+  test("404 sends error not found when given an article_id that doesnt exist", () => {
+    return request(app)
+      .get("/api/articles/20/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article does not exist.');
+      });
+  });
+  test("400 sends error bad request when given an article_id that is the wrong datatype", () => {
+    return request(app)
+      .get("/api/articles/banana/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request.');
+      });
+  });
+  
 
 })
