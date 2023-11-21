@@ -17,6 +17,7 @@ exports.getArticleById = (req, res, next) => {
     .catch(next)
 }
 
+
 exports.patchArticleById = (req, res, next) => {
     const id = req.params.article_id
     const newVotes = req.body.inc_votes
