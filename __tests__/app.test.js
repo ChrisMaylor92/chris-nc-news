@@ -49,6 +49,31 @@ describe("GET /api/topics", () => {
     });
 })
 
+
+describe("GET /api/articles", () => {
+    test("200 sends an array of articles to the client", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+          expect(body.articles.length).toBe(13);
+          body.articles.forEach((article) => {
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.article_img_url).toBe("string");
+            expect(typeof article.comment_count).toBe("string");
+            expect(article.body).toBe(undefined)
+          });
+        });
+    });
+})
+
 describe("GET /api/articles/:article_id", () => {
     test("200 sends article object that matches the parametric article_ID to the client", () => {
         return request(app)
@@ -84,6 +109,7 @@ describe("GET /api/articles/:article_id", () => {
         });
     });
 })
+
 
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds comment to comments table with corresponding article_id", () => {
@@ -143,3 +169,4 @@ describe("POST /api/articles/:article_id/comments", () => {
     });
 
   })
+
