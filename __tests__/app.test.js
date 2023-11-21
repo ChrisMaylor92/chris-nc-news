@@ -85,3 +85,29 @@ describe("GET /api/articles/:article_id", () => {
     });
 })
 
+// describe("POST /api/articles/:article_id/comments", () => {
+//   test.only("201: adds comment to comments table with corresponding article_id", () => {
+//     const newComment = {
+//       username: 'ChrisMaylor92',
+//       body: 'Im really enjoying my time learning to code at Northcoders.'
+//     }
+//     return request(app)
+//       .post("/api/articles/5/comments")
+//       .send(newComment)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body.comment).toBe('Im really enjoying my time learning to code at Northcoders.');
+//       });
+//     });
+//     test('400: responds with an appropriate status and error message when provided without the correct properties', () => {
+//       return request(app)
+//         .post('/api/treasures')
+//         .send({
+//           colour: 'kat'
+//         })
+//         .expect(400)
+//         .then((response) => {
+//           expect(response.body.msg).toBe('bad request');
+//         });
+//     });
+//   })
