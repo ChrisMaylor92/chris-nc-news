@@ -11,11 +11,11 @@ app.use(express.json());
 
 
 
-app.get('/api', getEndpoints)//yeah
-app.get('/api/topics', getTopics)//yeah
-app.get('/api/articles', getArticles)//yeah
-app.get('/api/articles/:article_id', getArticleById) //yeah
-app.post('/api/articles/:article_id/comments', postComment) //yeah
+app.get('/api', getEndpoints)
+app.get('/api/topics', getTopics)
+app.get('/api/articles', getArticles)
+app.get('/api/articles/:article_id', getArticleById) 
+app.post('/api/articles/:article_id/comments', postComment) 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 app.get("/api/users", getUsers)
 app.delete('/api/comments/:comment_id', deleteComment)
