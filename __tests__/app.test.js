@@ -340,7 +340,7 @@ describe("GET /api/articles?topic=(any) ", () => {
         //needs a checkTopicExists 
       });
   });
-
+})
 describe("GET /api/users", () => {
   test("200 sends an array of users to the client", () => {
     return request(app)
