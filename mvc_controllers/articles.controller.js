@@ -20,7 +20,7 @@ exports.getArticles = (req, res, next) => {
         res.status(200).send({articles})
     })
     .catch(next)
-}
+    }
 }
 
 exports.getArticleById = (req, res, next) => {
@@ -42,5 +42,4 @@ exports.patchArticleById = (req, res, next) => {
         res.status(200).send({updatedArticle})
     })
     .catch(next)
-   
 }

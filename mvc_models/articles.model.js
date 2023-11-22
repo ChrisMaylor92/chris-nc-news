@@ -62,8 +62,7 @@ exports.updateArticle = (id, newVotes) => {
         .then((result) => {
             return result.rows[0]
         })
-       
-  }
+ }
 
 exports.checkArticleExists = (id) => {
     
