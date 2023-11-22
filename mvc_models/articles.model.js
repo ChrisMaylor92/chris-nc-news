@@ -26,6 +26,19 @@ exports.selectArticleById = (id) => {
         })
 }
 
+
+exports.updateArticle = (id, newVotes) => {
+
+    return db.query(
+      `UPDATE articles
+        SET votes = votes + $2
+        WHERE article_id = $1 RETURNING *;`, [id, newVotes])
+        .then((result) => {
+            return result.rows[0]
+        })
+       
+  }
+
 exports.checkArticleExists = (id) => {
     return db.query(`
         SELECT * FROM articles WHERE article_id = $1;`, [id])
@@ -35,3 +48,4 @@ exports.checkArticleExists = (id) => {
             }
         })
 }
+
