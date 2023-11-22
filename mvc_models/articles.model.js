@@ -50,7 +50,6 @@ exports.checkArticleExists = (id) => {
         SELECT * FROM articles WHERE article_id = $1;`, [id])
         .then((result) =>{
             if(result.rows.length === 0){
-                console.log('im in here')
                 return Promise.reject({status:404, msg: 'Article does not exist.'})
             }
         })
