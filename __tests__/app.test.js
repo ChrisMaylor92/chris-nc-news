@@ -288,6 +288,59 @@ describe("GET /api/articles/:article_id/comments", () => {
 })
 
 
+describe("GET /api/articles?topic=(any) ", () => {
+  test("200 sends an array of articles with a topic of mitch to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(12);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+  test("200 sends an array of articles with a topic of cats to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(1);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+  test("200 sends an array of articles with a topic of paper to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(0);
+      });
+  });
+  test("400 bad request when passed a topic that doesnt exist", () => {
+    return request(app)
+      .get("/api/articles?topic=hats")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Topic does not exist.');
+        //needs a checkTopicExists 
+      });
+  });
+
 describe("GET /api/users", () => {
   test("200 sends an array of users to the client", () => {
     return request(app)
