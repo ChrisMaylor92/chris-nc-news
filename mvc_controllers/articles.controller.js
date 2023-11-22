@@ -1,6 +1,6 @@
-const {selectArticles} = require('../mvc_models/articles.model')
-const {selectArticleById} = require('../mvc_models/articles.model')
 const {checkTopicExists} = require('../mvc_models/topics.model')
+const {selectArticleById, selectArticles, updateArticle, checkArticleExists} = require('../mvc_models/articles.model')
+
 
 exports.getArticles = (req, res, next) => {
     const {query} = req
@@ -31,3 +31,16 @@ exports.getArticleById = (req, res, next) => {
     .catch(next)
 }
 
+
+exports.patchArticleById = (req, res, next) => {
+    const id = req.params.article_id
+    const newVotes = req.body.inc_votes
+    const promises = [updateArticle(id, newVotes), checkArticleExists(id)]
+    Promise.all(promises)
+    .then((resolvedPromises) => {
+        const updatedArticle = resolvedPromises[0]
+        res.status(200).send({updatedArticle})
+    })
+    .catch(next)
+   
+}
