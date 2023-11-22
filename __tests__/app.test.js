@@ -233,7 +233,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 })
 
 describe("GET /api/users", () => {
-  test.only("200 sends an array of users to the client", () => {
+  test("200 sends an array of users to the client", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
