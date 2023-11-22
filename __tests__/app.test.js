@@ -112,7 +112,7 @@ describe("GET /api/articles/:article_id", () => {
 
 
 describe("PATCH /api/articles/:article_id", () => {
-    test("200: changes article by article id", () => {
+  test("200: changes article by article id", () => {
       const newVotes = { inc_votes: 5 }
       return request(app)
         .patch("/api/articles/5")
@@ -129,8 +129,8 @@ describe("PATCH /api/articles/:article_id", () => {
           expect(body.updatedArticle.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
           expect(body.updatedArticle.article_id).toBe(5);
         });
-    })
-    test("404 not found, correct datatype used but nothing exists at that parametric article_id", () => {
+  })
+  test("404 not found, correct datatype used but nothing exists at that parametric article_id", () => {
       const newVotes = { inc_votes: 5 }
       return request(app)
       .patch(`/api/articles/20`)
@@ -140,6 +140,28 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe('Article does not exist.');
      
       });
+  });
+  test("400 bad request, wrong datatype used ", () => {
+    const newVotes = { inc_votes: 5 }
+    return request(app)
+    .patch(`/api/articles/banana`)
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+   
+    });
+  });
+  test("400 bad request, wrong datatype used ", () => {
+    const newVotes = { inc_votes: 'banana' }
+    return request(app)
+    .patch(`/api/articles/5`)
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+   
+    });
   });
 })
 
