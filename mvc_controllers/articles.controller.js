@@ -17,9 +17,6 @@ exports.getArticles = (req, res, next) => {
     } else {
     selectArticles(query)
     .then((articles) => {
-
-        res.status(200).send({articles: articles.rows})
-
         res.status(200).send({articles})
     })
     .catch(next)
