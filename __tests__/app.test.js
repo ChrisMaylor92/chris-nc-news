@@ -108,6 +108,22 @@ describe("GET /api/articles/:article_id", () => {
        
         });
     });
+    test("200 sends article object that matches the parametric article_ID to the client, including a comment_count", () => {
+      return request(app)
+      .get(`/api/articles/5`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.title).toBe("UNCOVERED: catspiracy to bring down democracy");
+        expect(body.article.topic).toBe("cats");
+        expect(body.article.author).toBe("rogersop");
+        expect(body.article.body).toBe("Bastet walks amongst us, and the cats are taking arms!");
+        expect(body.article.votes).toBe(0);
+        expect(body.article.created_at).toBe("2020-08-03T13:14:00.000Z");
+        expect(body.article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+        expect(body.article.article_id).toBe(5);
+        expect(body.article.comment_count).toBe('2');
+      });
+  });
 })
 
 
