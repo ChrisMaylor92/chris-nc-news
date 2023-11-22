@@ -127,6 +127,61 @@ describe("GET /api/articles/:article_id", () => {
 })
 
 
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: changes article by article id", () => {
+      const newVotes = { inc_votes: 5 }
+      return request(app)
+        .patch("/api/articles/5")
+        .send(newVotes)
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body)
+          expect(body.updatedArticle.title).toBe("UNCOVERED: catspiracy to bring down democracy");
+          expect(body.updatedArticle.topic).toBe("cats");
+          expect(body.updatedArticle.author).toBe("rogersop");
+          expect(body.updatedArticle.body).toBe("Bastet walks amongst us, and the cats are taking arms!");
+          expect(body.updatedArticle.votes).toBe(5);
+          expect(body.updatedArticle.created_at).toBe("2020-08-03T13:14:00.000Z");
+          expect(body.updatedArticle.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+          expect(body.updatedArticle.article_id).toBe(5);
+        });
+  })
+  test("404 not found, correct datatype used but nothing exists at that parametric article_id", () => {
+      const newVotes = { inc_votes: 5 }
+      return request(app)
+      .patch(`/api/articles/20`)
+      .send(newVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article does not exist.');
+     
+      });
+  });
+  test("400 bad request, wrong datatype used ", () => {
+    const newVotes = { inc_votes: 5 }
+    return request(app)
+    .patch(`/api/articles/banana`)
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+   
+    });
+  });
+  test("400 bad request, wrong datatype used ", () => {
+    const newVotes = { inc_votes: 'banana' }
+    return request(app)
+    .patch(`/api/articles/5`)
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+   
+    });
+  });
+})
+
+
 
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds comment to comments table with corresponding article_id", () => {
@@ -246,5 +301,104 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
   
 
+})
+
+
+describe("GET /api/articles?topic=(any) ", () => {
+  test("200 sends an array of articles with a topic of mitch to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(12);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+  test("200 sends an array of articles with a topic of cats to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(1);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+  test("200 sends an array of articles with a topic of paper to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(0);
+      });
+  });
+  test("400 bad request when passed a topic that doesnt exist", () => {
+    return request(app)
+      .get("/api/articles?topic=hats")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Topic does not exist.');
+        //needs a checkTopicExists 
+      });
+  });
+
+describe("GET /api/users", () => {
+  test("200 sends an array of users to the client", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        body.users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+});
+
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("200: deletes comment by comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({})
+     
+      });
+  })
+  test("400: wrong datatype in params", () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request.');
+      });
+  })
+  test("404 sends error not found when given an comment_id that doesnt exist", () => {
+    return request(app)
+      .delete("/api/comments/25")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Comment does not exist.');
+      });
+  })
 })
 
