@@ -11,7 +11,6 @@ exports.getArticles = (req, res, next) => {
             return selectArticles(query)
         })
         .then((articles) => {
-            console.log('helloo')
             res.status(200).send({articles})
         })
         .catch(next)
