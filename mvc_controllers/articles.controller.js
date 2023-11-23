@@ -5,7 +5,15 @@ const {selectArticleById, selectArticles, updateArticle, checkArticleExists} = r
 exports.getArticles = (req, res, next) => {
     const {query} = req
     const queryKeys = Object.keys(query)
-    if(queryKeys.length > 0){
+    if(queryKeys.length > 0 && queryKeys[0] === 'sort_by') {
+        selectArticles(query)
+        .then((articles) => {
+            res.status(200).send({articles})
+        })
+        .catch(next)
+    }
+
+    if(queryKeys.length > 0 && queryKeys[0] === 'topic'){
         checkTopicExists(query.topic)
         .then(() => {
             return selectArticles(query)

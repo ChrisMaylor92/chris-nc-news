@@ -28,7 +28,6 @@ File 2:
         'PGDATABASE=nc_news;'
 
 
-
 Please install dependencies by running command; 
 npm install 
 
