@@ -874,7 +874,7 @@ describe("DELETE /api/comments/:comment_id", () => {
 })
 
 
-describe.only("GET /api/users/:username", () => {
+describe("GET /api/users/:username", () => {
   test("200 sends user object that matches the parametric username to the client", () => {
       return request(app)
       .get(`/api/users/rogersop`)
