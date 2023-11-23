@@ -880,7 +880,7 @@ describe("GET /api/users/:username", () => {
       .get(`/api/users/rogersop`)
       .expect(200)
       .then(({ body }) => {
-        console.log(body, '<<<<<')
+       
         expect(body.user.username).toBe('rogersop');
         expect(body.user.avatar_url).toBe('https://avatars2.githubusercontent.com/u/24394918?s=400&v=4');
         expect(body.user.name).toBe('paul');
@@ -897,3 +897,63 @@ describe("GET /api/users/:username", () => {
   });
 })
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: changes comment by comment_id", () => {
+      const newVotes = { inc_votes: 5 }
+      return request(app)
+        .patch("/api/comments/2")
+        .send(newVotes)
+        .expect(200)
+        .then(({ body }) => {
+          
+          expect(body.updatedComment.body).toBe("The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.")
+          expect(body.updatedComment.votes).toBe(19);
+          expect(body.updatedComment.author).toBe("butter_bridge");
+          expect(body.updatedComment.article_id).toBe(1);
+          expect(body.updatedComment.created_at).toBe("2020-10-31T03:03:00.000Z");
+        });
+  })
+  test("200: changes comment by comment_id, when using minus numbers", () => {
+    const newVotes = { inc_votes: -5 }
+    return request(app)
+      .patch("/api/comments/2")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedComment.votes).toBe(9);
+      });
+})
+  test("404 not found, correct datatype used but nothing exists at that parametric comment_id", () => {
+      const newVotes = { inc_votes: 5 }
+      return request(app)
+      .patch(`/api/comments/100`)
+      .send(newVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Comment does not exist.');
+     
+      });
+  });
+  test("400 bad request, wrong datatype used ", () => {
+    const newVotes = { inc_votes: 5 }
+    return request(app)
+    .patch(`/api/comments/banana`)
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+   
+    });
+  });
+  test("400 bad request, wrong datatype used ", () => {
+    const newVotes = { inc_votes: 'banana' }
+    return request(app)
+    .patch(`/api/comments/5`)
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+   
+    });
+  });
+})
