@@ -128,31 +128,414 @@ describe("GET /api/articles?topic=(any) ", () => {
   });
 })
 
-// describe("GET /api/articles?sort_by=(any valid column)", () => {
-//   test.only("200 sends an array of articles to the client, sorted by article_id", () => {
-//     return request(app)
-//       .get("/api/articles?sort_by=article_id")
-//       .expect(200)
-//       .then(({ body }) => {
-//         console.log(body)
-//         expect(body.articles).toBeSortedBy("article_id", {
-//           descending: true,
-//     });
-//       expect(body.articles.length).toBe(13);
-//       body.articles.forEach((article) => {
-//           expect(typeof article.title).toBe("string");
-//           expect(typeof article.topic).toBe("string");
-//           expect(typeof article.author).toBe("string");
-//           expect(typeof article.created_at).toBe("string");
-//           expect(typeof article.article_id).toBe("number");
-//           expect(typeof article.article_img_url).toBe("string");
-//           expect(typeof article.comment_count).toBe("string");
-//           expect(article.body).toBe(undefined)
-//       });
-//     });
-//   });
+describe("GET /api/articles?sort_by=(any valid column)&order=(asc/desc)", () => {
+  test("200 sends an array of articles to the client, sorted by article_id, defaults to desc with no order query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("article_id", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by article_id, ordered desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+     
+        expect(body.articles).toBeSortedBy("article_id", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by article_id, ordered asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+      
+        expect(body.articles).toBeSortedBy("article_id", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by title, defaults desc order query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+       
+        expect(body.articles).toBeSortedBy("title", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by title, ordered desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+      
+        expect(body.articles).toBeSortedBy("title", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by title, ordered asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("title", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by topic, defaults to desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("topic", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by topic, ordered desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+       
+        expect(body.articles).toBeSortedBy("topic", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by topic, ordered asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("topic", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by author, defaults to desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+       
+        expect(body.articles).toBeSortedBy("author", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by author, ordered desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("author", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by author, ordered asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+      
+        expect(body.articles).toBeSortedBy("author", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by created_at, defaults to desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by created_at, ordered desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by created_at, ordered asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+       
+        expect(body.articles).toBeSortedBy("created_at", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by article_img_url, defaults to desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_img_url")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("article_img_url", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by article_img_url, ordered desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_img_url&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("article_img_url", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, sorted by article_img_url, ordered asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_img_url&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("article_img_url", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  // test("400 Bad request, when passed a column that doesnt exist", () => {
+  //   return request(app)
+  //   .get("/api/articles?sort_by=banana")
+  //   .expect(400)
+  //   .then(({ body }) => {
+  //     expect(body.msg).toBe('Bad request.');
+     
+
+  //   });
+  // });
+ 
   
-// })
+})
 // describe("GET /api/articles?order=(asc/desc)", () => {
 //   test("200 sends an array of articles to the client", () => {
 //     return request(app)
