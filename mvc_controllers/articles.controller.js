@@ -1,5 +1,5 @@
 const {checkTopicExists} = require('../mvc_models/topics.model')
-const {selectArticleById, selectArticles, updateArticle, checkArticleExists} = require('../mvc_models/articles.model')
+const {selectArticleById, selectArticles, updateArticle, checkArticleExists, insertArticle} = require('../mvc_models/articles.model')
 
 
 exports.getArticles = (req, res, next) => {
@@ -48,6 +48,17 @@ exports.patchArticleById = (req, res, next) => {
     .then((resolvedPromises) => {
         const updatedArticle = resolvedPromises[0]
         res.status(200).send({updatedArticle})
+    })
+    .catch(next)
+}
+
+
+exports.postArticle = (req, res, next) => {
+    
+    const newArticle = req.body
+    insertArticle(newArticle)
+    .then((newArticle) => {
+        res.status(201).send({newArticle})
     })
     .catch(next)
 }
