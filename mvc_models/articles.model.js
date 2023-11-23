@@ -184,7 +184,7 @@ exports.selectArticleById = (id) => {
         GROUP BY articles.article_id
         ORDER BY created_at DESC;`, [+id])
         .then((articles) =>{
-            console.log(articles.rows, 'rows')
+       
             if(articles.rows.length === 0) {
                 return Promise.reject({status:404, msg: 'Article does not exist.'})
             }else{
@@ -215,4 +215,16 @@ exports.checkArticleExists = (id) => {
             }
         })
 }
+
+exports.insertArticle = (newArticle) => {
+
+    return db.query(
+      `INSERT INTO articles (title, topic, author, body)
+      VALUES ($1, $2, $3, $4) RETURNING *;`,
+      [newArticle.title, newArticle.topic, newArticle.author, newArticle.body]
+    )
+    .then((result) => {
+      return result.rows[[0]]
+    })
+  }
 

@@ -658,7 +658,7 @@ describe("PATCH /api/articles/:article_id", () => {
         .send(newVotes)
         .expect(200)
         .then(({ body }) => {
-          console.log(body)
+          
           expect(body.updatedArticle.title).toBe("UNCOVERED: catspiracy to bring down democracy");
           expect(body.updatedArticle.topic).toBe("cats");
           expect(body.updatedArticle.author).toBe("rogersop");
@@ -957,3 +957,58 @@ describe("PATCH /api/comments/:comment_id", () => {
     });
   });
 })
+
+
+
+
+describe("POST /api/articles", () => {
+  test("201: adds article to articles table ", () => {
+    const newArticle = 
+    {
+      title: "Chris's awesome article",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging... As do I."
+  
+    }
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newArticle.title).toBe("Chris's awesome article")
+        expect(body.newArticle.topic).toBe("mitch");
+        expect(body.newArticle.author).toBe('butter_bridge');
+        expect(body.newArticle.body).toBe("I find this existence challenging... As do I.");
+      });
+    });
+    test('400: responds with an appropriate status and error message when provided without the correct properties', () => {
+      return request(app)
+        .post('/api/articles')
+        .send({
+          colour: 'kat'
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe('Bad request.');
+        });
+    });
+    test('400: responds with an appropriate status and error message when provided with correct properties but the wrong datatype', () => {
+      const newArticle = 
+    {
+      title: 10,
+      topic: "mitch",
+      author: 10,
+      body: "I find this existence challenging... As do I."
+  
+    }
+      return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe('Bad request.');
+        });
+    });
+
+  })
