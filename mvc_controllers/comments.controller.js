@@ -1,5 +1,5 @@
 
-const {insertComment, selectCommentsByArticleId, modelDeleteComment} = require('../mvc_models/comments.model')
+const {insertComment, selectCommentsByArticleId, modelDeleteComment, updateComment, checkCommentExists} = require('../mvc_models/comments.model')
 const {checkArticleExists} = require('../mvc_models/articles.model')
 
 
@@ -35,6 +35,22 @@ exports.deleteComment = (req, res, next) => {
     modelDeleteComment(id)
     .then(() => {
         res.status(204).send()
+    })
+    .catch(next)
+}
+
+exports.patchCommentById = (req, res, next) => {
+    console.log('smeloooo')
+    updateComment()
+}
+exports.patchCommentById = (req, res, next) => {
+    const id = req.params.comment_id
+    const newVotes = req.body.inc_votes
+    const promises = [updateComment(id, newVotes), checkCommentExists(id)]
+    Promise.all(promises)
+    .then((resolvedPromises) => {
+        const updatedComment = resolvedPromises[0]
+        res.status(200).send({updatedComment})
     })
     .catch(next)
 }
