@@ -13,23 +13,7 @@ Due to using .gitignore, you will not be able to run this locally or the hosted 
 
 Please set up 3 .env files in the root directory, like this; 
 
-File 1:
-    File Name: 
-        '.env.test'
-    File Contents: 
-        PGDATABASE=nc_news_test;
 
-File 2:
-    File Name: 
-        '.env.development'
-    File Contents: 
-        PGDATABASE=nc_news;
-
-File 3:
-    File Name: 
-        '.env.production'
-    File Contents: 
-        DATABASE_URL=postgres://jribcyoo:Wg5MXBXLIaqDjQkutf9haX5r2OJdNS-t@surus.db.elephantsql.com/jribcyoo
 
 Please install dependencies; 
 npm install 
