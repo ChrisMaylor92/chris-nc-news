@@ -523,43 +523,79 @@ describe("GET /api/articles?sort_by=(any valid column)&order=(asc/desc)", () => 
       });
     });
   });
-  // test("400 Bad request, when passed a column that doesnt exist", () => {
-  //   return request(app)
-  //   .get("/api/articles?sort_by=banana")
-  //   .expect(400)
-  //   .then(({ body }) => {
-  //     expect(body.msg).toBe('Bad request.');
-     
-
-  //   });
-  // });
+  test("400 Bad request, when passed a column that doesnt exist", () => {
+    return request(app)
+    .get("/api/articles?sort_by=banana")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+    });
+  });
+  test("400 Bad request, when passed an order that doesnt exist", () => {
+    return request(app)
+    .get("/api/articles?sort_by=article_id&order=banana")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+    });
+  });
  
   
 })
-// describe("GET /api/articles?order=(asc/desc)", () => {
-//   test("200 sends an array of articles to the client", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(body.articles).toBeSortedBy("created_at", {
-//           descending: true,
-//         });
-//         expect(body.articles.length).toBe(13);
-//         body.articles.forEach((article) => {
-//           expect(typeof article.title).toBe("string");
-//           expect(typeof article.topic).toBe("string");
-//           expect(typeof article.author).toBe("string");
-//           expect(typeof article.created_at).toBe("string");
-//           expect(typeof article.article_id).toBe("number");
-//           expect(typeof article.article_img_url).toBe("string");
-//           expect(typeof article.comment_count).toBe("string");
-//           expect(article.body).toBe(undefined)
-//         });
-//       });
-//   });
-  
-// })
+describe("GET /api/articles?order=(asc/desc)", () => {
+  test("200 sends an array of articles to the client, orderded asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("created_at", {
+          ascending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("200 sends an array of articles to the client, orderded desc", () => {
+    return request(app)
+      .get("/api/articles?order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+    });
+      expect(body.articles.length).toBe(13);
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+      });
+    });
+  });
+  test("400 Bad request, when passed an order that doesnt exist", () => {
+    return request(app)
+    .get("/api/articles?order=banana")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request.');
+    });
+  });
+})
 
 describe("GET /api/articles/:article_id", () => {
     test("200 sends article object that matches the parametric article_ID to the client", () => {

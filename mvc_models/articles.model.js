@@ -129,10 +129,25 @@ exports.selectArticles = (query) => {
         }
         
     }
+
+    if(queryKeys[0] === 'order' && greenListOrder.includes(query.order)){
+        if(query.order === 'asc'){
+            queryString += `GROUP BY articles.article_id
+            ORDER BY created_at ASC;`
+        }
+        if(query.order === 'desc'){
+            queryString += `GROUP BY articles.article_id
+            ORDER BY created_at DESC;`
+        }
+    }
+
     if (queryKeys[0] === 'sort_by' && !greenListSortBy.includes(query.sort_by)){
         return Promise.reject({status:400, msg: 'Bad request.'})
     }
     if (queryKeys[1] === 'order' && !greenListOrder.includes(query.order)){
+        return Promise.reject({status:400, msg: 'Bad request.'})
+    }
+    if (queryKeys[0] === 'order' && !greenListOrder.includes(query.order)){
         return Promise.reject({status:400, msg: 'Bad request.'})
     }
 
