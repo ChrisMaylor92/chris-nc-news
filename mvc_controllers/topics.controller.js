@@ -1,4 +1,4 @@
-const {selectTopics} = require('../mvc_models/topics.model')
+const {selectTopics, insertTopic} = require('../mvc_models/topics.model')
 
 exports.getTopics = (req, res, next) => {
     selectTopics()
@@ -6,4 +6,14 @@ exports.getTopics = (req, res, next) => {
         res.status(200).send({topics: topics.rows})
     })
 
+}
+
+
+exports.postTopic = (req, res, next) => {
+    const newTopic = req.body
+    insertTopic(newTopic)
+    .then((newTopic) => {
+        res.status(201).send({newTopic})
+    })
+    .catch(next)
 }

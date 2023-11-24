@@ -1310,3 +1310,49 @@ describe("GET /api/articles/:article_id/comments(pagination)", () => {
       });
   })
 })
+
+
+
+describe("POST /api/topics", () => {
+  test("201: adds topic to topics table ", () => {
+    const newTopic = 
+    {
+      "slug": "Beatboxing",
+      "description": "Everything boots and cats."
+    }
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newTopic.slug).toBe("Beatboxing")
+        expect(body.newTopic.description).toBe("Everything boots and cats.");
+      });
+    });
+    test('400: responds with an appropriate status and error message when provided without the correct properties', () => {
+      return request(app)
+        .post('/api/topics')
+        .send({
+          colour: 'kat'
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe('Bad request.');
+        });
+    });
+    test('400: responds with an appropriate status and error message when provided with correct properties but the wrong datatype', () => {
+      const newTopic = 
+    {
+      "slug": 5,
+      "description": 10
+    }
+      return request(app)
+        .post('/api/articles')
+        .send(newTopic)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe('Bad request.');
+        });
+    });
+
+  })
