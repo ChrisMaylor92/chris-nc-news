@@ -13,7 +13,7 @@ exports.insertComment = ({newComment, id}) => {
   }
 
 exports.selectCommentsByArticleId = (id, query) => {
-
+  
   const queryKeys = Object.keys(query)
 if(queryKeys.length > 0) {
   if(query.limit){
@@ -44,7 +44,6 @@ if(queryKeys.length > 0) {
           }) 
   }
   if (query.limit && !query.p) {
-    console.log('hellooo ')
     return db.query(`
       SELECT * 
       FROM comments 
@@ -56,7 +55,6 @@ if(queryKeys.length > 0) {
         }) 
 }
   if (query.limit === '' && query.p) {
-    console.log('smelllooo')
     const offsetAmount = query.p - 1
     const offset = 10 * offsetAmount
     return db.query(`
@@ -67,7 +65,6 @@ if(queryKeys.length > 0) {
       LIMIT 10
       OFFSET $2;`, [id, offset])
         .then((result) => {
-          console.log(result)
             return result
         }) 
   }

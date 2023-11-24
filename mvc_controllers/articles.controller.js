@@ -1,5 +1,5 @@
 const {checkTopicExists} = require('../mvc_models/topics.model')
-const {selectArticleById, selectArticles, updateArticle, checkArticleExists, insertArticle} = require('../mvc_models/articles.model')
+const {selectArticleById, selectArticles, updateArticle, checkArticleExists, insertArticle, modelDeleteArticle} = require('../mvc_models/articles.model')
 
 
 exports.getArticles = (req, res, next) => {
@@ -67,6 +67,15 @@ exports.postArticle = (req, res, next) => {
     insertArticle(newArticle)
     .then((newArticle) => {
         res.status(201).send({newArticle})
+    })
+    .catch(next)
+}
+
+exports.deleteArticle = (req, res, next) => {
+    const id = req.params.article_id
+    modelDeleteArticle(id)
+    .then(() => {
+        res.status(204).send()
     })
     .catch(next)
 }
