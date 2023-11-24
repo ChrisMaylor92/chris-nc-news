@@ -772,6 +772,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/5/comments")
       .expect(200)
       .then(({ body }) => {
+      
         body.comments.forEach((comment) => {
           expect(typeof comment.comment_id).toBe("number");
           expect(typeof comment.votes).toBe("number");
@@ -1124,6 +1125,28 @@ describe("POST /api/articles", () => {
           expect(body.total_count).toBe(3)
         });
     });
+    test("200 when passed a limit=3 query sends the 1st page of an array of articles with a limit of 3 to the client", () => {
+      return request(app)
+        .get("/api/articles?limit=3")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+          body.articles.forEach((article) => {
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.article_img_url).toBe("string");
+            expect(typeof article.comment_count).toBe("string");
+            expect(article.body).toBe(undefined)
+          });
+          expect(body.articles[0].title).toBe('Eight pug gifs that remind me of mitch');
+          expect(body.total_count).toBe(3)
+        });
+    });
     test("400 bad request, passed a limit that was the wrong datatype", () => {
       return request(app)
         .get("/api/articles?limit=banana")
@@ -1140,4 +1163,150 @@ describe("POST /api/articles", () => {
           expect(body.msg).toBe("Bad request.");
         });
     })
+})
+
+describe("GET /api/articles/:article_id/comments(pagination)", () => {
+  test("200 when passed a limit query sends the first page of an array of comments to the client, default limit of 10", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body, 'yooohooo over here')
+        expect(body.comments.length).toBe(10)
+        expect(body.comments[0].author).toBe('icellusedkars');
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+        
+        
+      });
+  });
+
+  test("200 when passed a default limit query and a p=2 query sends the second page of an array of comments to the client, default limit of 10", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body, 'yooohooo over here')
+        expect(body.comments.length).toBe(1)
+        expect(body.comments[0].body).toBe('Superficially charming');
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+        
+        
+      });
+  });
+
+  test("200 when passed a limit=5 query sends the first page of an array of comments to the client, with a limit of 5", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(5)
+        expect(body.comments[0].author).toBe('icellusedkars');
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+      });
+  });
+
+  test("200 when passed a limit=5 & p=1 query sends the first page of an array of comments to the client, limit of 5", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(5)
+        expect(body.comments[0].author).toBe('icellusedkars');
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+      });
+  });
+  test("200 when passed a limit=10 & p=2 query sends the second page of an array of comments to the client, limit of 5", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.comments)
+        expect(body.comments.length).toBe(5)
+        expect(body.comments[0].comment_id).toBe(8);
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+      });
+  });
+ 
+  
+  test("200 when passed a limit=3 & p=3query sends the 3rd page of an array of comments with a limit of 3 to the client", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=3&p=3")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.comments)
+        expect(body.comments.length).toBe(3)
+        expect(body.comments[0].comment_id).toBe(6);
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+      });
+  });
+  test("400 bad request, passed a limit that was the wrong datatype", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  })
+  test("400 bad request, passed a limit that was the wrong datatype", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=3&p=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  })
 })
