@@ -19,8 +19,9 @@ exports.postComment = (req, res, next) => {
 
 
 exports.getCommentsByArticleId = (req, res, next) => {
+    const {query} = req
     const id = req.params.article_id
-    const promises = [selectCommentsByArticleId(id), checkArticleExists(id)]
+    const promises = [selectCommentsByArticleId(id, query), checkArticleExists(id)]
     Promise.all(promises)
     .then((resolvedPromises) => {
         const comments = resolvedPromises[0].rows

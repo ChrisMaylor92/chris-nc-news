@@ -192,6 +192,7 @@ exports.selectArticles = (query) => {
                 return result.rows
             }) 
     }
+    
     if (query.limit === '' && query.p) {
         const offsetAmount = query.p - 1
         const offset = 10 * offsetAmount
@@ -205,6 +206,20 @@ exports.selectArticles = (query) => {
             ORDER BY created_at DESC
             LIMIT 10
             OFFSET $1;`, [offset])
+            .then((result) => {
+                return result.rows
+            }) 
+    }
+    if (query.limit && !query.p) {
+        return db.query(`
+            SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
+            COUNT (comment_id) AS comment_count 
+            FROM articles
+            LEFT JOIN comments
+            ON articles.article_id = comments.article_id
+            GROUP BY articles.article_id
+            ORDER BY created_at DESC
+            LIMIT $1;`, [query.limit])
             .then((result) => {
                 return result.rows
             }) 

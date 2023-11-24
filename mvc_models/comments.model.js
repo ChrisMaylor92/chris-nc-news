@@ -12,24 +12,112 @@ exports.insertComment = ({newComment, id}) => {
     })
   }
 
-exports.selectCommentsByArticleId = (id) => {
-    return db.query(`
-    SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [id])
-} 
+exports.selectCommentsByArticleId = (id, query) => {
 
+  const queryKeys = Object.keys(query)
+if(queryKeys.length > 0) {
+  if(query.limit){
+    const capitalLimit = query.limit.toUpperCase()
+    if (capitalLimit !== query.limit) {
+       
+        return Promise.reject({status:400, msg: 'Bad request.'})
+    }
+  }
+  if(query.p){
+      const capitalP = query.p.toUpperCase()
+      if (capitalP !== query.p) {
+          return Promise.reject({status:400, msg: 'Bad request.'})
+      }
+  }
+
+  if (query.limit === '' && !query.p) {
+  
+      return db.query(`
+      SELECT * 
+      FROM comments 
+      WHERE article_id = $1 
+      ORDER BY created_at DESC
+      LIMIT 10;`, [id])
+          .then((result) => {
+            
+              return result
+          }) 
+  }
+  if (query.limit && !query.p) {
+    console.log('hellooo ')
+    return db.query(`
+      SELECT * 
+      FROM comments 
+      WHERE article_id = $1 
+      ORDER BY created_at DESC
+      LIMIT $2;`, [id, query.limit])
+        .then((result) => {
+            return result
+        }) 
+}
+  if (query.limit === '' && query.p) {
+    console.log('smelllooo')
+    const offsetAmount = query.p - 1
+    const offset = 10 * offsetAmount
+    return db.query(`
+      SELECT * 
+      FROM comments 
+      WHERE article_id = $1 
+      ORDER BY created_at DESC
+      LIMIT 10
+      OFFSET $2;`, [id, offset])
+        .then((result) => {
+          console.log(result)
+            return result
+        }) 
+  }
+  if(query.limit && query.p === '1'){
+      return db.query(`
+        SELECT * 
+        FROM comments 
+        WHERE article_id = $1 
+        ORDER BY created_at DESC
+        LIMIT $2;`, [id, query.limit])
+      .then((result) => {
+        return result
+      }) 
+  }
+      
+      
+  if(query.limit && query.p ){
+    const offsetAmount = query.p - 1
+    const offset = query.limit * offsetAmount
+    return db.query(`
+        SELECT * 
+        FROM comments 
+        WHERE article_id = $1 
+        ORDER BY created_at DESC
+        LIMIT $2
+        OFFSET $3;`, [id, query.limit, offset])
+    .then((result) => {
+      return result
+    }) 
+  }
+} else {
+  return db.query(`
+      SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [id])
+}
+} 
+      
 exports.modelDeleteComment = (id) => {
-  return db.query(
-    `DELETE FROM comments
-    WHERE comment_id = $1 RETURNING *;`, [id]
-  )
-  .then((result) =>{
-    if(result.rows.length === 0){
-        return Promise.reject({status:404, msg: 'Comment does not exist.'})
-    }
-    else { 
-        return result.rows[0]
-    }
-})
+    return db.query(
+      `DELETE FROM comments
+      WHERE comment_id = $1 RETURNING *;`, [id]
+    )
+    .then((result) =>{
+      if(result.rows.length === 0){
+          return Promise.reject({status:404, msg: 'Comment does not exist.'})
+      }
+      else { 
+          return result.rows[0]
+      }
+  })
+
 }
 
 exports.updateComment = (id, newVotes) => {
