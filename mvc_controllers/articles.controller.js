@@ -12,6 +12,14 @@ exports.getArticles = (req, res, next) => {
         })
         .catch(next)
     }
+    if(queryKeys.length > 0 && queryKeys[0] === 'limit'){
+        selectArticles(query)
+        .then((articles) => {
+            const count = articles.length
+            res.status(200).send({articles: articles, total_count: count})
+        })
+        .catch(next)
+    }
 
     if(queryKeys.length > 0 && queryKeys[0] === 'topic'){
         checkTopicExists(query.topic)
