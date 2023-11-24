@@ -1,9 +1,9 @@
 const { handlePsqlErrors, handleCustomErrors, handleServerErrors } = require('./errors')
-const apiRouter = require('./routes/api-router');
-const topicsRouter = require('./routes/topics-router');
-const usersRouter = require('./routes/users-router');
-const commentsRouter = require('./routes/comments-router');
-const articlesRouter = require('./routes/articles-router')
+const apiRouter = require('./routers/api-router');
+const topicsRouter = require('./routers/topics-router');
+const usersRouter = require('./routers/users-router');
+const commentsRouter = require('./routers/comments-router');
+const articlesRouter = require('./routers/articles-router')
 const express = require("express");
 const app = express()
 app.use(express.json());

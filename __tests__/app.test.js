@@ -881,7 +881,6 @@ describe("GET /api/users/:username", () => {
       .get(`/api/users/rogersop`)
       .expect(200)
       .then(({ body }) => {
-       
         expect(body.user.username).toBe('rogersop');
         expect(body.user.avatar_url).toBe('https://avatars2.githubusercontent.com/u/24394918?s=400&v=4');
         expect(body.user.name).toBe('paul');
@@ -906,7 +905,6 @@ describe("PATCH /api/comments/:comment_id", () => {
         .send(newVotes)
         .expect(200)
         .then(({ body }) => {
-          
           expect(body.updatedComment.body).toBe("The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.")
           expect(body.updatedComment.votes).toBe(19);
           expect(body.updatedComment.author).toBe("butter_bridge");
@@ -1171,7 +1169,6 @@ describe("GET /api/articles/:article_id/comments(pagination)", () => {
       .get("/api/articles/1/comments?limit")
       .expect(200)
       .then(({ body }) => {
-        console.log(body, 'yooohooo over here')
         expect(body.comments.length).toBe(10)
         expect(body.comments[0].author).toBe('icellusedkars');
         expect(body.comments).toBeSortedBy("created_at", {
@@ -1194,7 +1191,6 @@ describe("GET /api/articles/:article_id/comments(pagination)", () => {
       .get("/api/articles/1/comments?limit&p=2")
       .expect(200)
       .then(({ body }) => {
-        console.log(body, 'yooohooo over here')
         expect(body.comments.length).toBe(1)
         expect(body.comments[0].body).toBe('Superficially charming');
         expect(body.comments).toBeSortedBy("created_at", {
@@ -1256,7 +1252,6 @@ describe("GET /api/articles/:article_id/comments(pagination)", () => {
       .get("/api/articles/1/comments?limit=5&p=2")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.comments)
         expect(body.comments.length).toBe(5)
         expect(body.comments[0].comment_id).toBe(8);
         expect(body.comments).toBeSortedBy("created_at", {
@@ -1278,7 +1273,6 @@ describe("GET /api/articles/:article_id/comments(pagination)", () => {
       .get("/api/articles/1/comments?limit=3&p=3")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.comments)
         expect(body.comments.length).toBe(3)
         expect(body.comments[0].comment_id).toBe(6);
         expect(body.comments).toBeSortedBy("created_at", {
@@ -1356,3 +1350,32 @@ describe("POST /api/topics", () => {
     });
 
   })
+
+  describe("DELETE /api/articles/:article_id", () => {
+    test("200: deletes articles by article_id", () => {
+      return request(app)
+        .delete("/api/articles/10")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({})
+       
+        });
+    })
+    test("400: wrong datatype in params", () => {
+      return request(app)
+        .delete("/api/articles/banana")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request.');
+        });
+    })
+    test("404 sends error not found when given an comment_id that doesnt exist", () => {
+      return request(app)
+        .delete("/api/articles/25")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Article does not exist.');
+        });
+    })
+  })
+  
