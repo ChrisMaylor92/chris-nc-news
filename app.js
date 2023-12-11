@@ -4,6 +4,8 @@ const topicsRouter = require('./routers/topics-router');
 const usersRouter = require('./routers/users-router');
 const commentsRouter = require('./routers/comments-router');
 const articlesRouter = require('./routers/articles-router')
+const cors = require('cors')
+app.use(cors())
 const express = require("express");
 const app = express()
 app.use(express.json());
