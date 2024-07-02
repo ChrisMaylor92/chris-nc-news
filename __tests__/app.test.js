@@ -1012,8 +1012,8 @@ describe("POST /api/articles", () => {
 
   })
 
-  describe("GET /api/articles/(pagination)", () => {
-    test("200 when passed a limit=10 & p=1query sends the first page of an array of articles to the client, limit of 10", () => {
+describe("GET /api/articles/(pagination)", () => {
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
       return request(app)
         .get("/api/articles?limit=10&p=1")
         .expect(200)
