@@ -1351,7 +1351,7 @@ describe("POST /api/topics", () => {
 
   })
 
-  describe("DELETE /api/articles/:article_id", () => {
+describe("DELETE /api/articles/:article_id", () => {
     test("200: deletes articles by article_id", () => {
       return request(app)
         .delete("/api/articles/10")
@@ -1378,4 +1378,28 @@ describe("POST /api/topics", () => {
         });
     })
   })
-  
+
+describe("GET /api/articles/(pagination)", () => {
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?limit=10&p=1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+          body.articles.forEach((article) => {
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.article_img_url).toBe("string");
+            expect(typeof article.comment_count).toBe("string");
+            expect(article.body).toBe(undefined)
+          });
+          expect(body.articles[0].title).toBe('Eight pug gifs that remind me of mitch');
+          expect(body.total_count).toBe(10)
+        });
+    });
+})
