@@ -2,42 +2,36 @@ const db = require("../db/connection");
 
 
 exports.selectArticles = (query) => {
-
     let queryString = `
-    SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-    COUNT (comment_id) AS comment_count 
-    FROM articles
-    LEFT JOIN comments
-    ON articles.article_id = comments.article_id `
-    
-    const greenListSortBy = ['title', 'topic', 'author', 'created_at', 'article_id', 'article_img_url']
-    const greenListOrder = ['asc', 'desc']
-    
-    
-    const queryKeys = Object.keys(query)
-
-    if (queryKeys.length === 0) {
-        return db.query(`
         SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
         COUNT (comment_id) AS comment_count 
         FROM articles
         LEFT JOIN comments
-        ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id
-        ORDER BY created_at DESC;`)
+        ON articles.article_id = comments.article_id `
+    
+    const greenListSortBy = ['title', 'topic', 'author', 'created_at', 'article_id', 'article_img_url']
+    const greenListOrder = ['asc', 'desc']
+    
+    const queryKeys = Object.keys(query)
+
+    if (queryKeys.length === 0) {
+        return db.query(queryString + `
+            GROUP BY articles.article_id
+            ORDER BY created_at DESC;`
+        )
         .then((result) => {
             return result.rows
         })
-    }   
-    
-     //ERROR HANDLING
-     if(query.limit){
+    }
+     //ERROR HANDLING 
+     // all return the same reject statement so could all fall under 1 if statement
+    if(query.limit){
         const capitalLimit = query.limit.toUpperCase()
         if (capitalLimit !== query.limit) {
-           
             return Promise.reject({status:400, msg: 'Bad request.'})
         }
     }
+    
     if(query.p){
         const capitalP = query.p.toUpperCase()
         if (capitalP !== query.p) {
@@ -50,109 +44,34 @@ exports.selectArticles = (query) => {
     if (query.order && !greenListOrder.includes(query.order)){
         return Promise.reject({status:400, msg: 'Bad request.'})
     }
-    
-            let sortBy 
-            if (!query.sort_by) {
-                sortBy = 'created_at'
-            }
-            else {
-                sortBy = query.sort_by
-            }
-            let order 
-            if (!query.order) {
-                order = 'desc'
-            }
-            else {
-                order = query.order
-            }
-            let limit 
-            if (query.limit) {
-                limit = query.limit
-            }
-            if (query.limit === ''){
-                limit = 10
-            }
-            
-                    if (!query.limit) {
-                        
-                        if (!query.p) {
-                            if (!query.topic){
-                                return db.query(queryString + `
-                                
-                                GROUP BY articles.article_id
-                                ORDER BY ${sortBy} ${order} 
-                                ${query.limit === "" ? `LIMIT 10` : ``};`)
-                                .then((result) => {
-                                    return result.rows
-                                }) 
-                            }
-                            if (query.topic){
-                                return db.query(queryString + `
-                                WHERE topic = $1
-                                GROUP BY articles.article_id
-                                ORDER BY ${sortBy} ${order}
-                                ${query.limit === "" ? `LIMIT 10` : ``};`, [query.topic])
-                                .then((result) => {
-                                    return result.rows
-                                }) 
-                            }
-                            
-                        }
-                    }
-                    
-                    if (query.limit ) {
-                        
-                        if (!query.p || query.p === '1') {
-                            
-                            if (!query.topic){
-                                return db.query(queryString + `
-                                GROUP BY articles.article_id
-                                ORDER BY ${sortBy} ${order}
-                                LIMIT $1;`, [limit])
-                                .then((result) => {
-                                    return result.rows
-                                }) 
-                            }
-                            if (query.topic){
-                                return db.query(queryString + `
-                                WHERE topic = $1
-                                GROUP BY articles.article_id
-                                ORDER BY ${sortBy} ${order}
-                                LIMIT $2;`, [query.topic, limit])
-                                .then((result) => {
-                                    return result.rows
-                                }) 
-                            }
-                        }
-                        if (query.p) {
-                            
-                            const offsetAmount = query.p - 1
-                            const offset = query.limit * offsetAmount
-                            if (!query.topic){
-                                return db.query(queryString + `
-                                GROUP BY articles.article_id
-                                ORDER BY ${sortBy} ${order}
-                                LIMIT $1
-                                OFFSET $2;`, [limit, offset])
-                                .then((result) => {
-                                    return result.rows
-                                }) 
-                            }
-                            if (query.topic){
-                                return db.query(queryString + `
-                                WHERE topic = $1
-                                GROUP BY articles.article_id
-                                ORDER BY ${sortBy} ${order}
-                                LIMIT $2
-                                OFFSET $3;`, [query.topic, limit, offset])
-                                .then((result) => {
-                                    return result.rows
-                                }) 
-                            }
-                        }
-                    }
-                  
-        
+// CREATE UTIL FUNCTION called create query defaults, one function with all conditions below in it
+    if (!query.sort_by) {
+        query.sort_by = 'created_at'
+    }
+    if (!query.order) {
+        query.order = 'desc'
+    }
+    if (query.limit === '' && !query.limit){
+        query.limit = `10`
+    }
+
+    const offsetAmount = query.p - 1
+    const offset = query.limit * offsetAmount
+    return db.query(queryString + `
+        ${query.topic ? `WHERE topic = $1` : ``}
+        GROUP BY articles.article_id
+        ORDER BY ${query.sort_by} ${query.order}
+        ${ query.limit ? `LIMIT $${query.topic ? `2` : `1`}` : ``}
+        ${query.p && query.limit && query.p !== '1' ? `OFFSET $` : ``}${query.topic && query.limit && query.p && query.p !== 1 ? `3` : ``}${!query.topic && query.limit && query.p && query.p !== '1' ? `2` : ``};`, 
+            query.topic && query.limit && query.p && query.p !== '1' ? [query.topic, query.limit, offset] : 
+            query.topic && query.limit ? [query.topic, query.limit] : 
+            query.topic ? [query.topic] : 
+            query.limit && !query.p || query.p === '1' ? [query.limit] : 
+            query.limit && query.p && query.p !== '1' ? [query.limit, offset] : []
+    )
+    .then((result) => {
+        return result.rows
+    })      
 }
 
 exports.selectArticleById = (id) => {

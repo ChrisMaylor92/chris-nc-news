@@ -1386,10 +1386,18 @@ describe("DELETE /api/articles/:article_id", () => {
 describe("GET /api/articles/(pagination)", () => {
     test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
       return request(app)
-        .get("/api/articles?topic=mitch&limit=3&p=2")
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit=3&p=2")
         .expect(200)
         .then(({ body }) => {
-           console.log(body.articles)
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
         });
     });
 })
