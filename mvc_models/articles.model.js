@@ -23,8 +23,7 @@ exports.selectArticles = (query) => {
             return result.rows
         })
     }
-     //ERROR HANDLING 
-     // all return the same reject statement so could all fall under 1 if statement
+    
     if(query.limit){
         const capitalLimit = query.limit.toUpperCase()
         if (capitalLimit !== query.limit) {
@@ -38,13 +37,12 @@ exports.selectArticles = (query) => {
             return Promise.reject({status:400, msg: 'Bad request.'})
         }
     }
-    if (query.sort_by && !greenListSortBy.includes(query.sort_by)){
+
+    if (query.sort_by && !greenListSortBy.includes(query.sort_by) || query.order && !greenListOrder.includes(query.order)){
         return Promise.reject({status:400, msg: 'Bad request.'})
     }
-    if (query.order && !greenListOrder.includes(query.order)){
-        return Promise.reject({status:400, msg: 'Bad request.'})
-    }
-// CREATE UTIL FUNCTION called create query defaults, one function with all conditions below in it
+    
+
     if (!query.sort_by) {
         query.sort_by = 'created_at'
     }
@@ -62,7 +60,7 @@ exports.selectArticles = (query) => {
         GROUP BY articles.article_id
         ORDER BY ${query.sort_by} ${query.order}
         ${ query.limit ? `LIMIT $${query.topic ? `2` : `1`}` : ``}
-        ${query.p && query.limit && query.p !== '1' ? `OFFSET $` : ``}${query.topic && query.limit && query.p && query.p !== 1 ? `3` : ``}${!query.topic && query.limit && query.p && query.p !== '1' ? `2` : ``};`, 
+        ${query.p && query.limit && query.p !== '1' ? `OFFSET $` : ``}${query.topic && query.limit && query.p && query.p !== '1' ? `3` : ``}${!query.topic && query.limit && query.p && query.p !== '1' ? `2` : ``};`, 
             query.topic && query.limit && query.p && query.p !== '1' ? [query.topic, query.limit, offset] : 
             query.topic && query.limit ? [query.topic, query.limit] : 
             query.topic ? [query.topic] : 
@@ -76,7 +74,7 @@ exports.selectArticles = (query) => {
 
 exports.selectArticleById = (id) => {
 
-        return db.query(`
+    return db.query(`
         SELECT articles.*, 
         COUNT (comment_id) AS comment_count 
         FROM articles
@@ -84,27 +82,27 @@ exports.selectArticleById = (id) => {
         ON articles.article_id = comments.article_id
         WHERE articles.article_id = $1
         GROUP BY articles.article_id
-        ORDER BY created_at DESC;`, [+id])
-        .then((articles) =>{
-       
-            if(articles.rows.length === 0) {
-                return Promise.reject({status:404, msg: 'Article does not exist.'})
-            }else{
-                return articles
-            }
-        })
+        ORDER BY created_at DESC;`, [+id]
+    )
+    .then((articles) =>{
+        if(articles.rows.length === 0) {
+            return Promise.reject({status:404, msg: 'Article does not exist.'})
+        }
+        else return articles
+    })
 }
 
 
 exports.updateArticle = (id, newVotes) => {
 
-    return db.query(
-      `UPDATE articles
+    return db.query(`
+        UPDATE articles
         SET votes = votes + $2
-        WHERE article_id = $1 RETURNING *;`, [id, newVotes])
-        .then((result) => {
-            return result.rows[0]
-        })
+        WHERE article_id = $1 RETURNING *;`, [id, newVotes]
+    )
+    .then((result) => {
+        return result.rows[0]
+    })
  }
 
 exports.checkArticleExists = (id) => {

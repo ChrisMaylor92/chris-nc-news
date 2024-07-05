@@ -5,14 +5,8 @@ const {selectArticleById, selectArticles, updateArticle, checkArticleExists, ins
 exports.getArticles = (req, res, next) => {
     const {query} = req
     const queryKeys = Object.keys(query)
-    if(queryKeys.length > 0 && queryKeys[0] === 'sort_by') {
-        selectArticles(query)
-        .then((articles) => {
-            res.status(200).send({articles})
-        })
-        .catch(next)
-    }
-    if(queryKeys.length > 0 && queryKeys[0] === 'limit'){
+    
+    if(queryKeys.includes('limit')){
         selectArticles(query)
         .then((articles) => {
             const count = articles.length
@@ -21,21 +15,24 @@ exports.getArticles = (req, res, next) => {
         .catch(next)
     }
 
-    if(queryKeys.length > 0 && queryKeys[0] === 'topic'){
+    if(queryKeys.includes('topic')){
         checkTopicExists(query.topic)
         .then(() => {
             return selectArticles(query)
         })
         .then((articles) => {
-            res.status(200).send({articles})
+            if (queryKeys.includes('limit')){
+                res.status(200).send({articles: articles, total_count:count})
+            }
+            else res.status(200).send({articles})
         })
         .catch(next)
     } else {
-    selectArticles(query)
-    .then((articles) => {
-        res.status(200).send({articles})
-    })
-    .catch(next)
+        selectArticles(query)
+        .then((articles) => {
+            res.status(200).send({articles})
+        })
+        .catch(next)
     }
 }
 

@@ -44,8 +44,8 @@
   },
   "ENDPOINT /api/articles" : {
     "GET /api/articles": {
-      "description": "serves an array of all articles that can be queried to be sorted by author or topic orded by asc or desc paginated and limited ",
-      "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
+      "description": "serves an array of all articles that can be queried limited and paginated",
+      "queries": ["sort_by", "order", "topic", "limit", "p"],
       "exampleResponse": {
         "articles": [
           {
