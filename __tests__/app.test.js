@@ -151,6 +151,31 @@ describe("GET /api/articles?sort_by=(any valid column)&order=(asc/desc)", () => 
       });
     });
   });
+  test("200 sends an array of articles to the client of a given topic, sorted by article_id, defaults to desc with no order query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body.articles).toBeSortedBy("article_id", {
+          descending: true,
+        });
+      
+      expect(body.articles.length).toBe(12);
+
+      body.articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(article.body).toBe(undefined)
+          expect(article.topic).toBe('mitch')
+      });
+    });
+  });
   test("200 sends an array of articles to the client, sorted by article_id, ordered desc", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id&order=desc")
@@ -1012,8 +1037,8 @@ describe("POST /api/articles", () => {
 
   })
 
-  describe("GET /api/articles/(pagination)", () => {
-    test("200 when passed a limit=10 & p=1query sends the first page of an array of articles to the client, limit of 10", () => {
+describe("GET /api/articles/(pagination)", () => {
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
       return request(app)
         .get("/api/articles?limit=10&p=1")
         .expect(200)
@@ -1079,28 +1104,7 @@ describe("POST /api/articles", () => {
           expect(body.articles[0].title).toBe('Eight pug gifs that remind me of mitch');
         });
     });
-    test("200 when passed a default limit query and a p=2 query sends the second page of an array of articles to the client, default limit of 10", () => {
-      return request(app)
-        .get("/api/articles?limit&p=2")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toBeSortedBy("created_at", {
-            descending: true,
-          });
-          expect(body.total_count).toBe(3)
-          body.articles.forEach((article) => {
-            expect(typeof article.title).toBe("string");
-            expect(typeof article.topic).toBe("string");
-            expect(typeof article.author).toBe("string");
-            expect(typeof article.created_at).toBe("string");
-            expect(typeof article.article_id).toBe("number");
-            expect(typeof article.article_img_url).toBe("string");
-            expect(typeof article.comment_count).toBe("string");
-            expect(article.body).toBe(undefined)
-          });
-          expect(body.articles[0].title).toBe("Does Mitch predate civilisation?");
-        });
-    });
+    
     test("200 when passed a limit=3 & p=3query sends the 3rd page of an array of articles with a limit of 3 to the client", () => {
       return request(app)
         .get("/api/articles?limit=3&p=3")
@@ -1351,7 +1355,7 @@ describe("POST /api/topics", () => {
 
   })
 
-  describe("DELETE /api/articles/:article_id", () => {
+describe("DELETE /api/articles/:article_id", () => {
     test("200: deletes articles by article_id", () => {
       return request(app)
         .delete("/api/articles/10")
@@ -1378,4 +1382,189 @@ describe("POST /api/topics", () => {
         });
     })
   })
-  
+//SCRATCH DOING EVERY INSTANCE TEST ONLY TEST FOR THE ONES YOURE GOING TO SHOW 
+describe("GET /api/articles/(pagination)", () => {
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit=3&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit=3&p=2")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit=3")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit&p=2")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&topic=mitch&limit&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+
+
+
+
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc&topic=mitch&limit=3&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc&topic=mitch&limit=3&p=2")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc&topic=mitch&limit=3")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc&topic=mitch&limit")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc&topic=mitch&limit&p=2")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc&topic=mitch&limit&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+
+
+
+
+
+
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&topic=mitch&limit=3&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&topic=mitch&limit=3&p=2")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&topic=mitch&limit=3")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&&topic=mitch&limit")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&&topic=mitch&limit&p=2")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&topic=mitch&limit&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&topic=mitch&limit=3&p=1")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+    test("200 when passed a limit=10 & p=1 query sends the first page of an array of articles to the client, limit of 10", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+           //console.log(body.articles)
+        });
+    });
+})

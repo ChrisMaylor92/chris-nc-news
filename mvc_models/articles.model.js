@@ -2,175 +2,35 @@ const db = require("../db/connection");
 
 
 exports.selectArticles = (query) => {
-
-
-    const queryKeys = Object.keys(query)
-
-    if (queryKeys.length === 0) {
-        return db.query(`
+    let queryString = `
         SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
         COUNT (comment_id) AS comment_count 
         FROM articles
         LEFT JOIN comments
-        ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id
-        ORDER BY created_at DESC;`)
-        .then((result) => {
-            return result.rows
-        })
-    }   
-
-    let queryString = `
-    SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-    COUNT (comment_id) AS comment_count 
-    FROM articles
-    LEFT JOIN comments
-    ON articles.article_id = comments.article_id `
+        ON articles.article_id = comments.article_id `
     
     const greenListSortBy = ['title', 'topic', 'author', 'created_at', 'article_id', 'article_img_url']
     const greenListOrder = ['asc', 'desc']
+    
+    const queryKeys = Object.keys(query)
 
-    if(greenListSortBy.includes(query.sort_by)){
-        //all article id instances
-        if(query.sort_by === 'article_id' && query.order === undefined){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY article_id DESC;`
-        }
-
-        if (greenListOrder.includes(query.order)){
-            if(query.sort_by === 'article_id' && query.order === 'desc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY article_id DESC;`
-            }
-            if(query.sort_by === 'article_id' && query.order === 'asc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY article_id ASC;`
-            }
-        }
-        //all title instances
-        if(query.sort_by === 'title' && query.order === undefined){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY title DESC;`
-        }
-
-        if (greenListOrder.includes(query.order)){
-            if(query.sort_by === 'title' && query.order === 'desc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY title DESC;`
-            }
-            if(query.sort_by === 'title' && query.order === 'asc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY title ASC;`
-            }
-        }
-        //all topic instances
-        if(query.sort_by === 'topic' && query.order === undefined){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY topic DESC;`
-        }
-
-        if (greenListOrder.includes(query.order)){
-            if(query.sort_by === 'topic' && query.order === 'desc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY topic DESC;`
-            }
-            if(query.sort_by === 'topic' && query.order === 'asc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY topic ASC;`
-            }
-        }
-        //all author instances
-        if(query.sort_by === 'author' && query.order === undefined){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY author DESC;`
-        }
-
-        if (greenListOrder.includes(query.order)){
-            if(query.sort_by === 'author' && query.order === 'desc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY author DESC;`
-            }
-            if(query.sort_by === 'author' && query.order === 'asc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY author ASC;`
-            }
-        }
-        //all created_at instances
-        if(query.sort_by === 'created_at' && query.order === undefined){
-            queryString += `GROUP BY articles.article_id
+    if (queryKeys.length === 0) {
+        return db.query(queryString + `
+            GROUP BY articles.article_id
             ORDER BY created_at DESC;`
-        }
-
-        if (greenListOrder.includes(query.order)){
-            if(query.sort_by === 'created_at' && query.order === 'desc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY created_at DESC;`
-            }
-            if(query.sort_by === 'created_at' && query.order === 'asc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY created_at ASC;`
-            }
-        }
-        //all article_img_url instances
-        if(query.sort_by === 'article_img_url' && query.order === undefined){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY article_img_url DESC;`
-        }
-
-        if (greenListOrder.includes(query.order)){
-            if(query.sort_by === 'article_img_url' && query.order === 'desc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY article_img_url DESC;`
-            }
-            if(query.sort_by === 'article_img_url' && query.order === 'asc'){
-                queryString += `GROUP BY articles.article_id
-                ORDER BY article_img_url ASC;`
-            }
-        }
-        
-    }
-
-    if(queryKeys[0] === 'order' && greenListOrder.includes(query.order)){
-        if(query.order === 'asc'){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY created_at ASC;`
-        }
-        if(query.order === 'desc'){
-            queryString += `GROUP BY articles.article_id
-            ORDER BY created_at DESC;`
-        }
-    }
-
-    if (queryKeys[0] === 'sort_by' && !greenListSortBy.includes(query.sort_by)){
-        return Promise.reject({status:400, msg: 'Bad request.'})
-    }
-    if (queryKeys[1] === 'order' && !greenListOrder.includes(query.order)){
-        return Promise.reject({status:400, msg: 'Bad request.'})
-    }
-    if (queryKeys[0] === 'order' && !greenListOrder.includes(query.order)){
-        return Promise.reject({status:400, msg: 'Bad request.'})
-    }
-    if(query.topic){
-        return db.query(`
-        SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-        COUNT (comment_id) AS comment_count 
-        FROM articles
-        LEFT JOIN comments
-        ON articles.article_id = comments.article_id
-        WHERE topic = $1
-        GROUP BY articles.article_id
-        ORDER BY created_at DESC;`, [query.topic])
+        )
         .then((result) => {
             return result.rows
-        }) 
-    } 
+        })
+    }
+    
     if(query.limit){
         const capitalLimit = query.limit.toUpperCase()
         if (capitalLimit !== query.limit) {
-           
             return Promise.reject({status:400, msg: 'Bad request.'})
         }
     }
+    
     if(query.p){
         const capitalP = query.p.toUpperCase()
         if (capitalP !== query.p) {
@@ -178,95 +38,43 @@ exports.selectArticles = (query) => {
         }
     }
 
-    if (query.limit === '' && !query.p) {
-        return db.query(`
-            SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-            COUNT (comment_id) AS comment_count 
-            FROM articles
-            LEFT JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY articles.article_id
-            ORDER BY created_at DESC
-            LIMIT 10;`)
-            .then((result) => {
-                return result.rows
-            }) 
+    if (query.sort_by && !greenListSortBy.includes(query.sort_by) || query.order && !greenListOrder.includes(query.order)){
+        return Promise.reject({status:400, msg: 'Bad request.'})
     }
     
-    if (query.limit === '' && query.p) {
-        const offsetAmount = query.p - 1
-        const offset = 10 * offsetAmount
-        return db.query(`
-            SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-            COUNT (comment_id) AS comment_count 
-            FROM articles
-            LEFT JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY articles.article_id
-            ORDER BY created_at DESC
-            LIMIT 10
-            OFFSET $1;`, [offset])
-            .then((result) => {
-                return result.rows
-            }) 
+
+    if (!query.sort_by) {
+        query.sort_by = 'created_at'
     }
-    if (query.limit && !query.p) {
-        return db.query(`
-            SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-            COUNT (comment_id) AS comment_count 
-            FROM articles
-            LEFT JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY articles.article_id
-            ORDER BY created_at DESC
-            LIMIT $1;`, [query.limit])
-            .then((result) => {
-                return result.rows
-            }) 
+    if (!query.order) {
+        query.order = 'desc'
     }
-    if(query.limit && query.p === '1'){
-        return db.query(`
-            SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-            COUNT (comment_id) AS comment_count 
-            FROM articles
-            LEFT JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY articles.article_id
-            ORDER BY created_at DESC
-            LIMIT $1;`, [query.limit])
-            .then((result) => {
-                return result.rows
-            }) 
-    }
-    if(query.limit && query.p ){
-        const offsetAmount = query.p - 1
-        const offset = query.limit * offsetAmount
-        return db.query(`
-            SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.article_id, articles.article_img_url, 
-            COUNT (comment_id) AS comment_count 
-            FROM articles
-            LEFT JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY articles.article_id
-            ORDER BY created_at DESC
-            LIMIT $1
-            OFFSET $2;`, [query.limit, offset])
-            .then((result) => {
-                return result.rows
-            }) 
+    if (query.limit === '' && !query.limit){
+        query.limit = `10`
     }
 
-
-    
-    return db.query(queryString)
+    const offsetAmount = query.p - 1
+    const offset = query.limit * offsetAmount
+    return db.query(queryString + `
+        ${query.topic ? `WHERE topic = $1` : ``}
+        GROUP BY articles.article_id
+        ORDER BY ${query.sort_by} ${query.order}
+        ${ query.limit ? `LIMIT $${query.topic ? `2` : `1`}` : ``}
+        ${query.p && query.limit && query.p !== '1' ? `OFFSET $` : ``}${query.topic && query.limit && query.p && query.p !== '1' ? `3` : ``}${!query.topic && query.limit && query.p && query.p !== '1' ? `2` : ``};`, 
+            query.topic && query.limit && query.p && query.p !== '1' ? [query.topic, query.limit, offset] : 
+            query.topic && query.limit ? [query.topic, query.limit] : 
+            query.topic ? [query.topic] : 
+            query.limit && !query.p || query.p === '1' ? [query.limit] : 
+            query.limit && query.p && query.p !== '1' ? [query.limit, offset] : []
+    )
     .then((result) => {
         return result.rows
-    })
+    })      
 }
 
 exports.selectArticleById = (id) => {
 
-        return db.query(`
+    return db.query(`
         SELECT articles.*, 
         COUNT (comment_id) AS comment_count 
         FROM articles
@@ -274,27 +82,27 @@ exports.selectArticleById = (id) => {
         ON articles.article_id = comments.article_id
         WHERE articles.article_id = $1
         GROUP BY articles.article_id
-        ORDER BY created_at DESC;`, [+id])
-        .then((articles) =>{
-       
-            if(articles.rows.length === 0) {
-                return Promise.reject({status:404, msg: 'Article does not exist.'})
-            }else{
-                return articles
-            }
-        })
+        ORDER BY created_at DESC;`, [+id]
+    )
+    .then((articles) =>{
+        if(articles.rows.length === 0) {
+            return Promise.reject({status:404, msg: 'Article does not exist.'})
+        }
+        else return articles
+    })
 }
 
 
 exports.updateArticle = (id, newVotes) => {
 
-    return db.query(
-      `UPDATE articles
+    return db.query(`
+        UPDATE articles
         SET votes = votes + $2
-        WHERE article_id = $1 RETURNING *;`, [id, newVotes])
-        .then((result) => {
-            return result.rows[0]
-        })
+        WHERE article_id = $1 RETURNING *;`, [id, newVotes]
+    )
+    .then((result) => {
+        return result.rows[0]
+    })
  }
 
 exports.checkArticleExists = (id) => {
